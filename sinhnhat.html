@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lá Thư Tâm Tình</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="sn.css">
+</head>
+
+<body>
+    <div class="hearts" id="hearts"></div>
+    <div class="envelope closed" id="envelope">
+        <div class="envelope-flap"></div>
+        <div class="letter" id="letter">
+            <h1>Happy birthday</h1>
+            <p>Thân gửi em,</p>
+            <p>Vậy là thêm một tuổi mới rồi ha.</p>
+            <p>Chúc em tuổi mới luôn mạnh khỏe, hạnh phúc và cười nhiều hơn nhé. </p>
+            <p>Mong em sẽ hoàn thành được những ước mơ và những hoài bão em còn ấp ủ nhé.</p>
+            <p>Mong em thật sự hạnh phúc với điều em lựa chọn và những ngày tháng sau này,em sẽ không phải hối tiếc về những thứ không thuộc về em nữa</p>
+            <p>Hy vọng em chân cứng đá mềm đường xa không mỏi,sớm ngày thành công. </p>
+            <p class="signature" id="signature">Gửi những lời chúc đến em<br>Dũng</p>
+        </div>
+    </div>
+    <script>
+    let isTransitioning = false;
+
+function createHearts() {
+    const heartsContainer = document.getElementById('hearts');
+    const createSingleHeart = () => {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerHTML = '❤️';
+        heart.style.left = `${Math.random() * 100}%`;
+        heart.style.animationDelay = `${Math.random() * 5}s`;
+        heartsContainer.appendChild(heart);
+        heart.addEventListener('animationend', () => heart.remove());
+    };
+
+    for (let i = 0; i < 10; i++) {
+        createSingleHeart();
+    }
+    setInterval(createSingleHeart, 2000);
+}
+
+function applyWordTypingAnimation() {
+    const paragraphs = document.querySelectorAll('.letter p:not(.signature)');
+    let totalDelay = 2;
+    let totalWords = 0;
+
+    paragraphs.forEach((p) => {
+        const text = p.textContent.trim();
+
+        // FIX: Regex an toàn hơn để tránh lỗi trên điện thoại
+        const words = text.split(/(\s+)/).filter(w => w.trim().length > 0);
+
+        p.innerHTML = words
+            .map((word, index) => 
+                `<span class="word" style="animation-delay: ${totalDelay + index * 0.3}s">${word}</span>`
+            )
+            .join(' ');
+        
+        totalDelay += words.length * 0.3;
+        totalWords += words.length;
+    });
+
+    setTimeout(() => {
+        document.getElementById('signature').classList.add('show');
+    }, totalWords * 300 + 2000);
+}
+
+const envelope = document.getElementById('envelope');
+
+// FIX: hỗ trợ cả mobile
+function toggleEnvelope(e) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    envelope.classList.toggle('closed');
+    setTimeout(() => { isTransitioning = false; }, 1000);
+    e.stopPropagation();
+}
+
+envelope.addEventListener('click', toggleEnvelope);
+envelope.addEventListener('touchstart', toggleEnvelope);
+
+window.onload = function () {
+    createHearts();
+    applyWordTypingAnimation();
+
+    setTimeout(() => {
+        envelope.classList.remove('closed');
+    }, 1000);
+};
+    </script>
+    
+</body>
+
+</html>
